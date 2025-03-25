@@ -5,79 +5,32 @@
 
 // Routers
 const router = require('express').Router();
+const todo = require('../controllers/todo.controller')
 
-// Model
-const Todo = require('../models/todo.model')
+// // List 
+// router.get('/todo', todo.list);
 
-// List Todos:
-router.get('/todo', async (req, res) => {
+// // Create 
+// router.post('/todo', todo.create);
 
-    const result = await Todo.findAll() // Select * From todos
-    // findAndCountAll()
+// // Read 
+// router.get('/todo/:id', todo.read);
 
-    res.status(200).send({
-        error: false,
-        result
-    })
-});
+// // Update 
+// router.put('/todo/:id', todo.update);
 
-// Create Todo:
-router.post('/todo', async (req, res) => {
+// // Delete 
+// router.delete('/todo/:id', todo.delete)
 
-    // const result = await Todo.create({
-    //     title: "title-1",
-    //     description: 'description-1',
-    //     isDone: false,
-    //     priority: 0
-    // });
 
-    const result = await Todo.create(req.body);
+router.route('/todo')
+      .get(todo.list)
+      .post(todo.create);
 
-    res.status(201).send({
-        error: false,
-        result
-    });
-});
-
-// Read Todo:
-router.get('/todo/:id', async (req, res) =>{
-
-    //const result = await Todo.findOne({where:{id:req.params.id}});
-    const result = await Todo.findByPk(req.params.id);
-
-    res.status(202).send({
-        error:false,
-        result
-    })
-});
-
-// Update Todo;
-router.put('/todo/:id', async (req, res)=>{
-    
-    //const result = await Todo.update({... newData},{... where}) => [1]:succes, [0]: failed
-    //const result = await Todo.update({title:'title-updated-5'},{where: {id:5}})
-    const result = await Todo.update(req.body,{where: {id:req.params.id}})
-
-    res.status(202).send({
-        error:false,
-        result,
-        new: await Todo.findByPk(req.params.id)
-    })
-});
-
-// Delete 
-router.delete('/todo/:id', async (req, res)=>{
-    
-    // await Todo.destroy({... where})
-    const result = await Todo.destroy({where:{id:req.params.id}})
-
-    if(result) {
-        res.sendStatus(204)
-    } else {
-        res.errorStatusCode = 404;
-        throw new Error('Delete is not succesful. Data is not found or already deleted')
-    }
+router.route('/todo/:id')
+      .get(todo.read)
+      .put(todo.update)
+      .delete(todo.delete)
    
-})
 
 module.exports = router;
